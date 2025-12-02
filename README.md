@@ -1,7 +1,3 @@
-Here is a comprehensive `README.md` file tailored for your Chess-Tac-Toe project. It includes project description, features, rules, and setup instructions.
-
-***
-
 # Chess-Tac-Toe ♟️
 
 **Chess-Tac-Toe** is a strategic web-based game that combines the winning objective of Tic-Tac-Toe with the movement mechanics of Chess. It is built entirely in a single HTML file using vanilla JavaScript and CSS.
@@ -74,8 +70,3 @@ Ideas for extending the game:
 ## 📄 License
 
 This project is open-source and free to use.
-
----
-
-### **Next Steps for You**
-Would you like me to separate the code into three distinct files (`index.html`, `style.css`, `script.js`) to make the project easier to maintain, or would you like to add a "Restart" button feature directly to this README?
