@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chess-Tac-Toe</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background-color: #f0f0f0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+        }
+
+        .game-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            padding: 20px;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #222;
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            font-size: 13px;
+            margin-bottom: 20px;
+        }
+
+        .status {
+            text-align: center;
+            background: #f8f8f8;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+            border-left: 4px solid #333;
+        }
+
+        .piece-selector {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .piece-btn {
+            width: 50px;
+            height: 50px;
+            font-size: 30px;
+            border: 2px solid #ccc;
+            border-radius: 6px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .piece-btn:hover {
+            border-color: #666;
+            background: #fafafa;
+        }
+
+        .piece-btn.selected {
+            background: #333;
+            color: white;
+            border-color: #333;
+            transform: scale(1.05);
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-bottom: 20px;
+            background: #ddd;
+            padding: 8px;
+            border-radius: 8px;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cell {
+            aspect-ratio: 1;
+            border: 3px solid #999;
+            background: white;
+            border-radius: 6px;
+            font-size: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            user-select: none;
+        }
+
+        .cell:hover {
+            border-color: #666;
+            background: #fafafa;
+        }
+
+        .cell.selected {
+            background: #333;
+            color: white;
+            border-color: #333;
+        }
+
+        .cell.valid-move {
+            background: #d4edda;
+            border-color: #28a745;
+        }
+
+        .cell.valid-move::after {
+            content: '●';
+            position: absolute;
+            font-size: 18px;
+            color: #28a745;
+            opacity: 0.7;
+            bottom: 5px;
+            right: 8px;
+        }
+
+        .cell.valid-capture {
+            background: #f8d7da;
+            border-color: #dc3545;
+        }
+
+        .cell.valid-capture::after {
+            content: '×';
+            position: absolute;
+            font-size: 24px;
+            color: #dc3545;
+            opacity: 0.7;
+            bottom: 2px;
+            right: 6px;
+        }
+
+        .cell.winning-cell {
+            background: #ffd700;
+            border-color: #ff8c00;
+            animation: pulse 0.8s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .btn {
+            flex: 1;
+            padding: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            border: 2px solid #333;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: white;
+            color: #333;
+        }
+
+        .btn:hover {
+            background: #f0f0f0;
+        }
+
+        .btn-primary {
+            background: #333;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #555;
+            border-color: #555;
+        }
+
+        .instructions {
+            background: #f8f8f8;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 13px;
+            line-height: 1.6;
+            color: #555;
+        }
+
+        .instructions summary {
+            cursor: pointer;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            user-select: none;
+        }
+
+        .instructions[open] summary {
+            margin-bottom: 15px;
+        }
+
+        .instructions h3 {
+            color: #333;
+            font-size: 14px;
+            margin-top: 12px;
+            margin-bottom: 8px;
+        }
+
+        .instructions ul {
+            margin-left: 20px;
+            margin-bottom: 10px;
+        }
+
+        .instructions li {
+            margin-bottom: 6px;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.85);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .win-box {
+            background: white;
+            padding: 40px 30px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            max-width: 90%;
+        }
+
+        .win-box .trophy {
+            font-size: 64px;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .win-box .winner-text {
+            font-size: 28px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .win-box .subtext {
+            color: #666;
+            font-size: 14px;
+        }
+
+        @media (min-width: 600px) {
+            .game-container {
+                padding: 30px;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+
+            .subtitle {
+                font-size: 14px;
+            }
+
+            .status {
+                font-size: 18px;
+                padding: 14px;
+            }
+
+            .piece-btn {
+                width: 55px;
+                height: 55px;
+                font-size: 32px;
+            }
+
+            .cell {
+                font-size: 56px;
+            }
+
+            .btn {
+                padding: 14px;
+                font-size: 16px;
+            }
+
+            .instructions {
+                font-size: 14px;
+            }
+
+            .win-box {
+                padding: 50px 40px;
+            }
+
+            .win-box .trophy {
+                font-size: 80px;
+            }
+
+            .win-box .winner-text {
+                font-size: 32px;
+            }
+
+            .win-box .subtext {
+                font-size: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="game-container">
+        <h1>Chess-Tac-Toe</h1>
+        <div class="subtitle">Chess moves meet tic-tac-toe strategy</div>
+        
+        <div class="status" id="status">White's turn</div>
+        
+        <div class="piece-selector" id="pieceSelector"></div>
+        
+        <div class="board" id="board"></div>
+        
+        <div class="buttons">
+            <button class="btn" onclick="toggleInstructions()">
+                <span id="instructionsToggle">Show Rules</span>
+            </button>
+            <button class="btn btn-primary" onclick="resetGame()">New Game</button>
+        </div>
+
+        <details class="instructions" id="instructions">
+            <summary>How to Play Chess-Tac-Toe</summary>
+            
+            <p><strong>Goal:</strong> Get three of your pieces in a row (horizontal, vertical, or diagonal).</p>
+            
+            <h3><strong>Playing the Game</strong></h3>
+            <ul>
+                <li><strong>Place:</strong> Select a piece above, then click an empty square</li>
+                <li><strong>Move:</strong> Click your piece on the board, then click where to move it</li>
+                <li><strong>Capture:</strong> Move to a square with an opponent's piece to capture it</li>
+            </ul>
+            
+            <h3>Chess Movement Rules: </h3>
+            <ul>
+                <li><strong>King (♔/♚):</strong> One square in any direction</li>
+                <li><strong>Queen (♕/♛):</strong> Any distance straight or diagonal</li>
+                <li><strong>Rook (♖/♜):</strong> Any distance horizontally or vertically</li>
+                <li><strong>Bishop (♗/♝):</strong> Any distance diagonally</li>
+                <li><strong>Knight (♘/♞):</strong> L-shape (2+1 squares), can jump over pieces</li>
+                <li><strong>Pawn (♙/♟):</strong> One square forward, diagonal to capture</li>
+            </ul>
+            
+            <h3>Hints: </h3>
+            <ul>
+                <li><strong>Green squares:</strong> Valid moves</li>
+                <li><strong>Red squares:</strong> Valid captures</li>
+                <li><strong>Dark squares:</strong> Currently selected piece</li>
+            </ul>
+        </details>
+    </div>
+
+    <script>
+        const gameState = {
+            board: Array(9).fill(null),
+            currentPlayer: 'white',
+            selectedPiece: null,
+            selectedCell: null,
+            winner: null,
+            winningLine: null,
+            pieces: {
+                white: ['♔', '♕', '♖', '♗', '♘', '♙'],
+                black: ['♚', '♛', '♜', '♝', '♞', '♟']
+            }
+        };
+
+        function isValidMove(start, end, forCapture = false) {
+            if (!gameState.selectedPiece) return false;
+
+            const startRow = Math.floor(start / 3);
+            const startCol = start % 3;
+            const endRow = Math.floor(end / 3);
+            const endCol = end % 3;
+
+            const rowDiff = Math.abs(endRow - startRow);
+            const colDiff = Math.abs(endCol - startCol);
+
+            if (gameState.selectedPiece === '♘' || gameState.selectedPiece === '♞') {
+                return (rowDiff === 2 && colDiff === 1) || (rowDiff === 1 && colDiff === 2);
+            }
+
+            if (!isPathClear(startRow, startCol, endRow, endCol)) {
+                return false;
+            }
+
+            if (gameState.selectedPiece === '♙' || gameState.selectedPiece === '♟') {
+                if (forCapture) {
+                    return rowDiff === 1 && colDiff === 1;
+                } else {
+                    return rowDiff === 1 && colDiff === 0;
+                }
+            }
+
+            switch (gameState.selectedPiece) {
+                case '♔':
+                case '♚':
+                    return rowDiff <= 1 && colDiff <= 1;
+                case '♕':
+                case '♛':
+                    return rowDiff === colDiff || rowDiff === 0 || colDiff === 0;
+                case '♖':
+                case '♜':
+                    return rowDiff === 0 || colDiff === 0;
+                case '♗':
+                case '♝':
+                    return rowDiff === colDiff;
+                default:
+                    return false;
+            }
+        }
+
+        function isPathClear(startRow, startCol, endRow, endCol) {
+            const rowDir = startRow === endRow ? 0 : (endRow - startRow) / Math.abs(endRow - startRow);
+            const colDir = startCol === endCol ? 0 : (endCol - startCol) / Math.abs(endCol - startCol);
+
+            let currentRow = startRow + rowDir;
+            let currentCol = startCol + colDir;
+
+            while (currentRow !== endRow || currentCol !== endCol) {
+                const index = currentRow * 3 + currentCol;
+                if (gameState.board[index] !== null) {
+                    return false;
+                }
+                currentRow += rowDir;
+                currentCol += colDir;
+            }
+
+            return true;
+        }
+
+        function checkWin(board) {
+            const lines = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8],
+                [0, 3, 6], [1, 4, 7], [2, 5, 8],
+                [0, 4, 8], [2, 4, 6]
+            ];
+
+            for (let line of lines) {
+                const [a, b, c] = line;
+                if (board[a] && board[b] && board[c]) {
+                    const isWhiteA = gameState.pieces.white.includes(board[a]);
+                    const isWhiteB = gameState.pieces.white.includes(board[b]);
+                    const isWhiteC = gameState.pieces.white.includes(board[c]);
+
+                    if (isWhiteA && isWhiteB && isWhiteC) {
+                        gameState.winningLine = line;
+                        return 'white';
+                    }
+                    if (!isWhiteA && !isWhiteB && !isWhiteC) {
+                        gameState.winningLine = line;
+                        return 'black';
+                    }
+                }
+            }
+            return null;
+        }
+
+        function isPieceOwnedByCurrentPlayer(piece) {
+            return gameState.currentPlayer === 'white' ?
+                gameState.pieces.white.includes(piece) :
+                gameState.pieces.black.includes(piece);
+        }
+
+        function handleCellClick(index) {
+            if (gameState.winner) return;
+
+            const clickedPiece = gameState.board[index];
+
+            if (gameState.selectedPiece && gameState.selectedCell === null) {
+                if (!gameState.board.includes(gameState.selectedPiece)) {
+                    if (!clickedPiece) {
+                        gameState.board[index] = gameState.selectedPiece;
+                        endTurn();
+                        return;
+                    }
+                }
+            }
+
+            if (clickedPiece) {
+                if (isPieceOwnedByCurrentPlayer(clickedPiece)) {
+                    gameState.selectedCell = index;
+                    gameState.selectedPiece = clickedPiece;
+                } else if (gameState.selectedCell !== null &&
+                    isValidMove(gameState.selectedCell, index, true)) {
+                    gameState.board[index] = gameState.board[gameState.selectedCell];
+                    gameState.board[gameState.selectedCell] = null;
+                    endTurn();
+                }
+            } else if (gameState.selectedCell !== null) {
+                if (isValidMove(gameState.selectedCell, index)) {
+                    gameState.board[index] = gameState.board[gameState.selectedCell];
+                    gameState.board[gameState.selectedCell] = null;
+                    endTurn();
+                }
+            }
+
+            if (!clickedPiece && gameState.selectedCell === null) {
+                gameState.selectedPiece = null;
+                gameState.selectedCell = null;
+            }
+
+            updateGame();
+        }
+
+        function endTurn() {
+            gameState.selectedPiece = null;
+            gameState.selectedCell = null;
+            gameState.currentPlayer = gameState.currentPlayer === 'white' ? 'black' : 'white';
+            const winner = checkWin(gameState.board);
+            if (winner) {
+                gameState.winner = winner;
+                setTimeout(() => showWinMessage(winner), 300);
+            }
+            updateGame();
+        }
+
+        function showWinMessage(winner) {
+            const overlay = document.createElement('div');
+            overlay.className = 'overlay';
+            overlay.innerHTML = `
+                <div class="win-box">
+                    <span class="trophy">🏆</span>
+                    <div class="winner-text">${winner.toUpperCase()} WINS!</div>
+                    <div class="subtext">Click anywhere to close this box</div>
+                    <div class="subtext">Click "New Game" to play again</div>
+                </div>
+            `;
+            overlay.onclick = () => overlay.remove();
+            document.body.appendChild(overlay);
+        }
+
+        function toggleInstructions() {
+            const details = document.getElementById('instructions');
+            const toggle = document.getElementById('instructionsToggle');
+            details.open = !details.open;
+            toggle.textContent = details.open ? 'Hide Rules' : 'Show Rules';
+        }
+
+        function selectPiece(piece) {
+            if (gameState.winner) return;
+            if (!gameState.board.includes(piece)) {
+                gameState.selectedPiece = piece;
+                gameState.selectedCell = null;
+                updateGame();
+            }
+        }
+
+        function updateGame() {
+            const status = document.getElementById('status');
+            
+            if (gameState.winner) {
+                status.textContent = `${gameState.winner.toUpperCase()} WINS!`;
+            } else {
+                status.textContent = `${gameState.currentPlayer.toUpperCase()}'s turn`;
+            }
+
+            const pieceSelector = document.getElementById('pieceSelector');
+            pieceSelector.innerHTML = '';
+            gameState.pieces[gameState.currentPlayer].forEach(piece => {
+                if (!gameState.board.includes(piece)) {
+                    const button = document.createElement('button');
+                    button.className = `piece-btn ${piece === gameState.selectedPiece ? 'selected' : ''}`;
+                    button.textContent = piece;
+                    button.onclick = () => selectPiece(piece);
+                    pieceSelector.appendChild(button);
+                }
+            });
+
+            const board = document.getElementById('board');
+            board.innerHTML = '';
+            gameState.board.forEach((piece, index) => {
+                const cell = document.createElement('div');
+                cell.className = 'cell';
+
+                if (gameState.winningLine && gameState.winningLine.includes(index)) {
+                    cell.classList.add('winning-cell');
+                }
+
+                if (index === gameState.selectedCell) {
+                    cell.classList.add('selected');
+                }
+
+                if (gameState.selectedCell !== null) {
+                    if (!piece && isValidMove(gameState.selectedCell, index)) {
+                        cell.classList.add('valid-move');
+                    } else if (piece && !isPieceOwnedByCurrentPlayer(piece) &&
+                        isValidMove(gameState.selectedCell, index, true)) {
+                        cell.classList.add('valid-capture');
+                    }
+                }
+
+                cell.textContent = piece || '';
+                cell.onclick = () => handleCellClick(index);
+                board.appendChild(cell);
+            });
+        }
+
+        function resetGame() {
+            const overlay = document.querySelector('.overlay');
+            if (overlay) overlay.remove();
+            
+            gameState.board = Array(9).fill(null);
+            gameState.currentPlayer = 'white';
+            gameState.selectedPiece = null;
+            gameState.selectedCell = null;
+            gameState.winner = null;
+            gameState.winningLine = null;
+            updateGame();
+        }
+
+        updateGame();
+    </script>
+</body>
+
+</html>
