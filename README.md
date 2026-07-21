@@ -1,5 +1,5 @@
 <h1 align="center">
-  Chess-Tac-Toe ♟️
+  Chess-Tac-Toe
 </h1>
 
 <p align="center">
