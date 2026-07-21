@@ -1,4 +1,18 @@
-# Chess-Tac-Toe ♟️
+<h1 align="center">
+  Chess-Tac-Toe ♟️
+</h1>
+
+<p align="center">
+  <strong>A strategic web-based game combining Tic-Tac-Toe's objective with Chess's movement mechanics.</strong>
+</p>
+
+<p align="center">
+  <img alt="HTML5" src="https://img.shields.io/badge/html5-%23E34F26.svg?style=flat&logo=html5&logoColor=white">
+  <img alt="CSS3" src="https://img.shields.io/badge/css3-%231572B6.svg?style=flat&logo=css3&logoColor=white">
+  <img alt="JavaScript" src="https://img.shields.io/badge/javascript-%23323330.svg?style=flat&logo=javascript&logoColor=%23F7DF1E">
+</p>
+
+<hr>
 
 **Chess-Tac-Toe** is a strategic web-based game that combines the winning objective of Tic-Tac-Toe with the movement mechanics of Chess. It is built entirely in a single HTML file using vanilla JavaScript and CSS.
 
@@ -53,19 +67,12 @@ Since this is a single-file application, running it is incredibly simple.
 2.  Double-click `index.html` to open it in your browser.
 3.  **That's it!** No server or build process required.
 
-## 🛠️ Technologies Used
-
-* **HTML5:** Structure and semantic markup.
-* **CSS3:** Styling, Flexbox/Grid layouts, and animations.
-* **JavaScript (ES6+):** Game logic, state management, and DOM manipulation.
-
 ## 🔮 Future Improvements
 
 Ideas for extending the game:
 * [ ] Add a timer per turn.
 * [ ] Implement a simple AI for single-player mode.
 * [ ] Add sound effects for moves and captures.
-* [ ] Add "Check" detection mechanics (optional, as the goal is 3-in-a-row, not checkmate).
 
 ## 📄 License
 
